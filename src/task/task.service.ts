@@ -1,4 +1,4 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TaskDTO } from './dto/task.DTO';
 
 @Injectable()
@@ -18,7 +18,19 @@ export class TaskService {
       return foundTask[0];
     }
 
-    throw new NotImplementedException('Task with id ${id} not found');
+    throw new HttpException(`Task with id ${id} not found`, HttpStatus.NOT_FOUND);
   }
+
+  update(task: TaskDTO) {
+    let taskIndex = this.tasks.findIndex(t => t.id === task.id);
+
+    if (taskIndex >= 0) {
+      this.tasks[taskIndex] = task;
+
+      return;
+  }
+
+  throw new HttpException(`Task with id ${task.id} not found`, HttpStatus.NOT_FOUND);
 }
 
+}
