@@ -26,13 +26,10 @@ export class AuthService {
       throw new UnauthorizedException();
     }
     
-    const payload = {
-      username: foundUser.username,
-      sub: foundUser.id,
-    };
+    const payload = { sub: foundUser.id, username: foundUser.username };
 
     const token = this.jwtService.sign(payload);
+    return { token, expiresIn: this.jwtExpirationTimeInSeconds };
     
-    return { token, expiresIn: this.jwtExpirationTimeInSeconds }
   }
 }
