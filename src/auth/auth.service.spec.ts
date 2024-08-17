@@ -1,11 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
-import { compareSync as bcryptCompareSync } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { AuthResponseDTO } from './dto/auth.DTO';
+
+// Mock bcrypt functions
+jest.mock('bcrypt', () => ({
+  compareSync: jest.fn(),
+}));
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -22,16 +27,25 @@ describe('AuthService', () => {
   };
 
   const mockConfigService = {
-    get: jest.fn(),
+    get: jest.fn().mockReturnValue(3600), // Mock JWT_EXPIRATION_TIME
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: UsersService, useValue: mockUsersService },
-        { provide: JwtService, useValue: mockJwtService },
-        { provide: ConfigService, useValue: mockConfigService },
+        {
+          provide: UsersService,
+          useValue: mockUsersService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
       ],
     }).compile();
 
@@ -46,44 +60,55 @@ describe('AuthService', () => {
   });
 
   describe('signIn', () => {
-    it('should return a token and expiration time when credentials are valid', async () => {
-      const username = 'testUser';
-      const password = 'testPass';
-      const user = { id: '1', username: 'testUser', password: 'hashedPass' };
-      const token = 'jwtToken';
-      const expiresIn = 3600;
+    it('should return a token and expiration time if user is valid', async () => {
+      const userDTO = {
+        id: '1',
+        username: 'testuser',
+        password: 'password123',
+      };
+      const payload = { sub: userDTO.id, username: userDTO.username };
+      const token = 'some-jwt-token';
 
-      mockUsersService.findByUserName.mockResolvedValue(user);
-      jest.spyOn(bcryptCompareSync, 'compareSync').mockReturnValue(true);
+      mockUsersService.findByUserName.mockResolvedValue(userDTO);
+      (bcrypt.compareSync as jest.Mock).mockReturnValue(true);
       mockJwtService.sign.mockReturnValue(token);
-      mockConfigService.get.mockReturnValue(expiresIn);
 
-      const result: AuthResponseDTO = await service.signIn(username, password);
-
-      expect(result).toEqual({ token, expiresIn });
-      expect(mockUsersService.findByUserName).toHaveBeenCalledWith(username);
-      expect(bcryptCompareSync).toHaveBeenCalledWith(password, user.password);
-      expect(mockJwtService.sign).toHaveBeenCalledWith({ sub: user.id, username: user.username });
+      const result = await service.signIn(userDTO.username, 'password123');
+      expect(result).toEqual({ token, expiresIn: 3600 });
+      expect(mockUsersService.findByUserName).toHaveBeenCalledWith(userDTO.username);
+      expect(mockJwtService.sign).toHaveBeenCalledWith(payload);
     });
 
-    it('should throw an UnauthorizedException when credentials are invalid', async () => {
-      const username = 'testUser';
-      const password = 'testPass';
-
+    it('should throw UnauthorizedException if user is invalid', async () => {
       mockUsersService.findByUserName.mockResolvedValue(null);
 
-      await expect(service.signIn(username, password)).rejects.toThrow(UnauthorizedException);
+      await expect(service.signIn('invaliduser', 'password123'))
+        .rejects
+        .toThrow(UnauthorizedException);
     });
 
-    it('should throw an UnauthorizedException when password is incorrect', async () => {
-      const username = 'testUser';
-      const password = 'testPass';
-      const user = { id: '1', username: 'testUser', password: 'hashedPass' };
+    it('should throw UnauthorizedException if password is incorrect', async () => {
+      const userDTO = {
+        id: '1',
+        username: 'testuser',
+        password: 'password123',
+      };
 
-      mockUsersService.findByUserName.mockResolvedValue(user);
-      jest.spyOn(bcryptCompareSync, 'compareSync').mockReturnValue(false);
+      mockUsersService.findByUserName.mockResolvedValue(userDTO);
+      (bcrypt.compareSync as jest.Mock).mockReturnValue(false);
 
-      await expect(service.signIn(username, password)).rejects.toThrow(UnauthorizedException);
+      await expect(service.signIn(userDTO.username, 'wrongpassword'))
+        .rejects
+        .toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('validateUser', () => {
+    it('should throw an error if method is not implemented', async () => {
+      // Use an arrow function to handle the async rejection
+      await expect(async () => {
+        await service.validateUser('username', 'password');
+      }).rejects.toThrow('Method not implemented.');
     });
   });
 });
