@@ -7,6 +7,12 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
+  login(payload: { username: string; sub: string; }) {
+    throw new Error('Method not implemented.');
+  }
+  validateUser(arg0: string, arg1: string) {
+    throw new Error('Method not implemented.');
+  }
   private jwtExpirationTimeInSeconds: number;
   
   constructor(
