@@ -1,73 +1,144 @@
+
+## Task Manegement API
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Tutorial: Construindo uma API RESTful com NestJS, TypeORM, e PostgreSQL
 
-## Description
+### Quem é o NestJs?
+NestJS é um framework de desenvolvimento de aplicativos Node.js que utiliza TypeScript como linguagem principal. Inspirado por conceitos de programação orientada a objetos (OOP), programação funcional (FP) e arquitetura modular, NestJS facilita a criação de aplicações escaláveis e de fácil manutenção.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# Projeto
 
-## Installation
+## Task Manegement API
 
-```bash
-$ npm install
+Este projeto é uma API de gerenciamento de tarefas desenvolvida para estudar e aplicar conceitos avançados do framework NestJS, utilizando uma stack moderna e robusta.
+
+
+## Stack da API
+
+A API foi desenvolvida utilizando o `nestjs` e `nodejs`, junto das seguintes libs: `typescript`, `jest`. Para salvar os dados está sendo utilizando o `postgres`, por meio da ORM `typeOrm`. A aplicação também está containerizada com `docker` para facilitar o gerenciamento do ambiente.
+
+## Funcionalidades
+
+- CRUD de Tarefas: Implementado com Controllers, Services, Modules e Decorators.
+- Validação de DTO: Utiliza `class-validator` para garantir que os dados recebidos estejam no formato correto.
+- Variáveis de Ambiente: Configuradas com `ConfigService` para maior flexibilidade e segurança.
+- Autenticação: Implementada com JWT (`JwtService`) e um guard personalizado (`AppGuard`) para proteger as rotas.
+- Password Hashing: Utiliza bcrypt para garantir a segurança das senhas armazenadas.
+- Banco de Dados: Integração planejada com PostgreSQL utilizando TypeORM.
+
+
+## Execução da API
+
+### Configuração
+Para executar o projeto:
+
+1 - Clone o respositório:
+```bash 
+git clone https://github.com/Humberto08/task_management_api.git
 ```
 
-## Running the app
+2 - Intale as dependências:
+```
+npm install
+```
+3 - Copie o arquivo .env.example e renomeie para .env, preenchendo todas as variáveis necessárias.
 
-```bash
-# development
-$ npm run start
+4 - Inicialize o container do banco de dados com Docker:
+```
+docker-compose up -d
 
-# watch mode
-$ npm run start:dev
+```
+5 - Execute as migrations com:
+```
+npm run migration:run
 
-# production mode
-$ npm run start:prod
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+6 - Inicie o servidor em modo de desenvolvimento:
+```
+npm run start:dev
 ```
 
-## Support
+7 - Acesse o serviço em:
+```
+ http://localhost:3000.
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+8 - Acesse a documentação api em:
+```
+https://documenter.getpostman.com/view/24656609/2sA3s9CTA7
+```
 
-## Stay in touch
+## Migrations
+- Criar uma migration:
+```
+npm run migration:create --name=nome-da-migration
+```
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Executar as migrations:
+```
+npm run migration:run
+```
 
-## License
+- Reverter as migrations:
+```
+npm run migration:revert
+```
 
-Nest is [MIT licensed](LICENSE).
+
+## Testes
+
+Executa os testes usando Jest.
+```
+npm run test
+```
+Executa os testes em modo watch.
+```
+npm run test:watch
+```
+
+Executa os testes e gera um relatório de cobertura.
+```
+npm run test:cov
+```
+
+ API
+
+Para subir a API, execute:
+```
+npm run start:dev
+```
+e acesse:
+```
+http://localhost:3000.
+```
+
+
+# Referências
+
+NestJS: https://nestjs.com/
+
+NodeJS: https://nodejs.org/pt
+
+Jest: https://jestjs.io/pt-BR/
+
+TypeORM: https://typeorm.io/
+
+PostgreSQL: https://www.postgresql.org/
+
+
+## Autores e colaboradores
+
+- [@Humberto Luciano](https://www.github.com/Humberto08)
+
+
+<div id='contatos' align="center">
+  <p align="center">Made with 💜 by Humberto Luciano</p>
+  <div id="contatos" align="center">
+    <a href="https://www.linkedin.com/in/humberto-luciano/" target="_blank"><img src="https://img.shields.io/badge/-LinkedIn-%230077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank"></a>
+</div>
