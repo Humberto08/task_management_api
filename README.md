@@ -134,7 +134,7 @@ PostgreSQL: https://www.postgresql.org/
 
 ## Autores e colaboradores
 
-- [@Humberto Luciano](https://www.github.com/Humberto08)
+- [Humberto Luciano](https://www.github.com/Humberto08)
 
 
 <div id='contatos' align="center">
